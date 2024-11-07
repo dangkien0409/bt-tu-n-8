@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+
+struct hangtu {
+    int heso;
+    int bac; 
+};
+
+class dathuc {
+public:
+    std::vector<hangtu> cachangtu; // Lưu trữ các hạng tử
+
+    void nhap() {
+        int soluonghangtu;
+        std::cout << "Nhập số lượng hạng tử: ";
+        std::cin >> soluonghangtu;
+
+        for (int i = 0; i < soluonghangtu; ++i) {
+            hangtu hangtu;
+            std::cout << "Nhập hệ số và bậc: ";
+            std::cin >> hangtu.heso >> hangtu.bac;
+            cachangtu.push_back(hangtu);
+        }
+    }
+
+    void in() {
+        for (size_t i = 0; i < cachangtu.size(); ++i) {
+            if (i > 0 && cachangtu[i].heso > 0) {
+                std::cout << " + ";
+            }
+            std::cout << cachangtu[i].heso << ".x^" << cachangtu[i].bac;
+        }
+        std::cout << ";" << std::endl;
+    }
+
+    dathuc cong(const dathuc& dathuckhac) {
+        dathuc ketqua;
+        
+        // Thêm các hạng tử từ đa thức hiện tại vào kết quả
+        ketqua.cachangtu = cachangtu;
+
+        // Cộng các hạng tử của đa thức đa thức khác vào kết quả
+        for (const auto& hangtu : dathuckhac.cachangtu) {
+            bool timthay = false;
+            for (auto& hangtuketqua : ketqua.cachangtu) {
+                if (hangtuketqua.bac == hangtu.bac) {
+                    hangtuketqua.heso += hangtu.heso;
+                    timthay = true;
+                    break;
+                }
+            }
+            // Nếu không tìm thấy bậc tương ứng, thêm hạng tử mới
+            if (!timthay) {
+                ketqua.cachangtu.push_back(hangtu);
+            }
+        }
+
+        return ketqua;
+    }
+};
+
+int main() {
+    dathuc f, g;
+
+    std::cout << "Nhập đa thức f(x):" << std::endl;
+    f.nhap();
+    std::cout << "f(x) = ";
+    f.in();
+
+    std::cout << "Nhập đa thức g(x):" << std::endl;
+    g.nhap();
+    std::cout << "g(x) = ";
+    g.in();
+
+    dathuc h = f.cong(g);
+    std::cout << "h(x) = f(x) + g(x) = ";
+    h.in();
+
+    return 0;
+}
